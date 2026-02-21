@@ -5,50 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Veritas AI - Die brutale Wahrheit</title>
     <style>
-        :root { --neon: #00ff41; --danger: #ff4141; --bg: #0a0a0a; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        #app { width: 400px; border: 2px solid var(--neon); padding: 20px; background: #111; box-shadow: 0 0 20px rgba(0,255,65,0.2); }
-        #chat { height: 300px; overflow-y: auto; border-bottom: 1px solid #333; margin-bottom: 15px; padding: 5px; font-size: 14px; }
-        .bot { color: var(--danger); margin: 10px 0; font-weight: bold; }
-        .user { color: #fff; text-align: right; margin: 10px 0; }
-        input, button { width: 100%; box-sizing: border-box; background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 10px; margin-top: 5px; }
-        button { cursor: pointer; font-weight: bold; transition: 0.3s; }
-        button:hover { background: var(--neon); color: #000; }
-        .key-section { font-size: 10px; margin-bottom: 10px; opacity: 0.7; }
+        :root { --neon: #00ff41; --danger: #ff4141; --bg: #050505; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        #app { width: 450px; border: 1px solid var(--neon); padding: 30px; background: #000; box-shadow: 0 0 30px rgba(0,255,65,0.1); position: relative; }
+        #app::before { content: "LIVE CONNECTION: ENCRYPTED"; position: absolute; top: -10px; left: 10px; background: #000; padding: 0 5px; font-size: 10px; }
+        
+        #chat { height: 350px; overflow-y: auto; border-bottom: 1px solid #222; margin-bottom: 20px; padding-right: 10px; scroll-behavior: smooth; }
+        #chat::-webkit-scrollbar { width: 3px; }
+        #chat::-webkit-scrollbar-thumb { background: var(--neon); }
+
+        .bot { color: var(--danger); margin: 15px 0; line-height: 1.4; animation: fadeIn 0.5s; }
+        .user { color: #888; text-align: right; margin: 15px 0; font-style: italic; animation: fadeIn 0.5s; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .input-area { display: flex; gap: 10px; }
+        input { flex-grow: 1; background: #000; border: 1px solid #333; color: var(--neon); padding: 12px; outline: none; }
+        input:focus { border-color: var(--neon); }
+        button { background: var(--neon); color: #000; border: none; padding: 12px 20px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+        button:hover { background: #fff; box-shadow: 0 0 10px #fff; }
+        
+        .status { font-size: 9px; color: #444; margin-top: 10px; text-align: center; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <div class="key-section">
-        <label>API Key (OpenAI):</label>
-        <input type="password" id="apiKey" placeholder="sk-...">
-    </div>
     <div id="chat">
-        <div class="bot">VERITAS: Gib mir deinen Key und frag was, wenn du Eier hast.</div>
+        <div class="bot">VERITAS: Verbindung hergestellt. Frag mich was, aber weine danach nicht rum.</div>
     </div>
-    <input type="text" id="userInput" placeholder="Deine naive Frage...">
-    <button onclick="askAI()">DIE WAHRHEIT ERFAHREN</button>
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Stell deine naive Frage..." onkeypress="if(event.key==='Enter') askAI()">
+        <button onclick="askAI()">SENDEN</button>
+    </div>
+    <div class="status">SYSTEM ACTIVE // NO FILTERS APPLIED</div>
 </div>
 
 <script>
     async function askAI() {
-        const input = document.getElementById('userInput').value;
+        const input = document.getElementById('userInput');
         const chat = document.getElementById('chat');
-        if (!input) return;
+        const text = input.value.trim();
 
-        chat.innerHTML += `<div class="user">${input}</div>`;
-        document.getElementById('userInput').value = "";
+        if (!text) return;
+
+        // User Nachricht anzeigen
+        chat.innerHTML += `<div class="user">${text}</div>`;
+        input.value = "";
+        chat.scrollTop = chat.scrollHeight;
 
         try {
+            // Wir rufen deine Serverless Function auf
             const response = await fetch('/api/chat', {
                 method: 'POST',
-                body: JSON.stringify({ prompt: input })
+                body: JSON.stringify({ prompt: text })
             });
+            
             const data = await response.json();
+            
+            // Bot Antwort anzeigen
             chat.innerHTML += `<div class="bot">VERITAS: ${data.reply}</div>`;
         } catch (e) {
-            chat.innerHTML += `<div class="bot">FEHLER: Irgendwas ist kaputt.</div>`;
+            chat.innerHTML += `<div class="bot">SYSTEM-FEHLER: Die Wahrheit war zu hart für den Server.</div>`;
         }
         chat.scrollTop = chat.scrollHeight;
     }
