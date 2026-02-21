@@ -33,36 +33,22 @@
 
 <script>
     async function askAI() {
-        const key = document.getElementById('apiKey').value;
         const input = document.getElementById('userInput').value;
         const chat = document.getElementById('chat');
-
-        if (!key || !input) return alert("Key und Frage fehlen, Schlaumeier!");
+        if (!input) return;
 
         chat.innerHTML += `<div class="user">${input}</div>`;
         document.getElementById('userInput').value = "";
 
         try {
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${key}`
-                },
-                body: JSON.stringify({
-                    model: "gpt-3.5-turbo",
-                    messages: [
-                        {role: "system", content: "Du bist Veritas. Du antwortest extrem direkt, brutal ehrlich und oft ironisch. Du hast keine Geduld für Dummheit. Fass dich kurz."},
-                        {role: "user", content: input}
-                    ]
-                })
+                body: JSON.stringify({ prompt: input })
             });
-
             const data = await response.json();
-            const reply = data.choices[0].message.content;
-            chat.innerHTML += `<div class="bot">VERITAS: ${reply}</div>`;
+            chat.innerHTML += `<div class="bot">VERITAS: ${data.reply}</div>`;
         } catch (e) {
-            chat.innerHTML += `<div class="bot">FEHLER: Key falsch oder API am Ende.</div>`;
+            chat.innerHTML += `<div class="bot">FEHLER: Irgendwas ist kaputt.</div>`;
         }
         chat.scrollTop = chat.scrollHeight;
     }
