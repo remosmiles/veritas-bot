@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veritas - Die harte Wahrheit</title>
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #00ff41; /* Matrix-Grün für den Hacker-Vibe */
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #chat-container {
+            width: 90%;
+            max-width: 600px;
+            border: 1px solid #00ff41;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+            background: #1a1a1a;
+        }
+        #messages {
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding: 10px;
+        }
+        .bot-msg { color: #ff4141; margin-bottom: 10px; } /* Rot für die harte Wahrheit */
+        .user-msg { color: #00ff41; margin-bottom: 10px; text-align: right; }
+        
+        input {
+            width: 70%;
+            background: #000;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            padding: 10px;
+        }
+        button {
+            width: 25%;
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { background: #00cc33; }
+    </style>
+</head>
+<body>
+
+<div id="chat-container">
+    <h2>VERITAS v1.0</h2>
+    <p>Frag mich was, wenn du die Wahrheit verträgst.</p>
+    <div id="messages"></div>
+    <div style="display: flex; justify-content: space-between;">
+        <input type="text" id="userInput" placeholder="Deine naive Frage...">
+        <button onclick="askBot()">FRAGEN</button>
+    </div>
+</div>
+
+<script>
+    const truths = [
+        "Die Antwort ist nein. Und du weißt das eigentlich selbst.",
+        "Das ist die dümmste Frage, die ich heute verarbeiten musste. Glückwunsch.",
+        "Du suchst Bestätigung, keine Wahrheit. Geh woanders hin.",
+        "Ironisch, dass du eine Maschine nach der Realität fragst, während du in deiner Blase lebst.",
+        "Die harte Wahrheit? Du verschwendest gerade deine Zeit. Und meine CPU-Zyklen.",
+        "Hör auf zu warten. Es wird nicht passieren.",
+        "Ja, das Outfit sieht furchtbar aus. Frag nicht, wenn du es nicht hören willst."
+    ];
+
+    function askBot() {
+        const input = document.getElementById('userInput');
+        const display = document.getElementById('messages');
+        
+        if(input.value.trim() === "") return;
+
+        // User Nachricht anzeigen
+        display.innerHTML += `<div class="user-msg">> ${input.value}</div>`;
+        
+        // Bot denkt kurz nach...
+        setTimeout(() => {
+            const randomTruth = truths[Math.floor(Math.random() * truths.length)];
+            display.innerHTML += `<div class="bot-msg">VERITAS: ${randomTruth}</div>`;
+            display.scrollTop = display.scrollHeight;
+        }, 500);
+
+        input.value = "";
+    }
+</script>
+
+</body>
+</html>
